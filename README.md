@@ -1,9 +1,5 @@
 # NeoPilot Dotfiles
 
-![NeoPilot Neovim](./assets/vim.png)
-
-## Introduction
-
 Welcome to NeoPilot optimized development environment that is well integrated
 with our stack.
 
@@ -107,9 +103,6 @@ You can provide additional zshrc settings by adding them to:
 
 ## tmux
 
-![tmux Menu](./assets/tmux-menu.png)
-![tmux Fuzzy Menu](./assets/tmux-fzf.png)
-
 `tmux` sessions are automatically started as part of `.zshrc` execution. You
 will be shown an option to join an existing detached session if they exist,
 otherwise a new session will be created and attached to.
@@ -135,10 +128,6 @@ otherwise a new session will be created and attached to.
 
 This environment is highly tuned towards providing a modern neovim/vim setup for
 development using modern languages such as Golang, Typescript etc.
-
-![Fuzzy Menu](./assets/fuzzymenu.png)
-
-![IDE](./assets/vim_ide.png)
 
 ### vimrc
 
@@ -221,6 +210,3 @@ Bonus:
   ` gruvbox dark #282828,#3c3836,#ebdbb2,#1d2021,#3e313c,#ebdbb2,#689d6a,#fb4934`
 
 ## Managing `*_local` override files
-
-You can use [vcsh](https://github.com/RichiH/vcsh) utility to version local
-files and sync them across machines.
