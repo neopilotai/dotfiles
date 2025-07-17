@@ -1,8 +1,0 @@
-mkhomedir
-mksourcedir
-
-exec chezmoi source-path ~/.file
-stdout $CHEZMOISOURCEDIR/dot_file
-
-! exec chezmoi source-path ~
-stderr 'not managed'

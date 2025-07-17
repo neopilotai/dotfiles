@@ -1,0 +1,36 @@
+# Dockerfile for dotfiles project environment
+
+FROM alpine:latest
+
+# Install essential packages
+RUN apk add --no-cache \
+  zsh \
+  bash \
+  curl \
+  git \
+  python3 \
+  py3-pip \
+  nodejs \
+  npm \
+  neovim \
+  tmux \
+  tldr \
+  && pip3 install --no-cache-dir --upgrade pip setuptools wheel \
+  && pip3 install --no-cache-dir vale \
+  && npm install -g chezmoi \
+  && npm cache clean --force
+
+# Set working directory inside container
+WORKDIR /root/dotfiles
+
+# Copy all project files
+COPY . .
+
+# Make all bin scripts executable
+RUN chmod +x ./bin/*
+
+# Use zsh as default shell
+SHELL ["/bin/zsh", "-c"]
+
+# Default command: start interactive shell
+CMD ["zsh"]

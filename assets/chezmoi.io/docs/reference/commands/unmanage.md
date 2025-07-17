@@ -1,3 +1,0 @@
-# `unmanage` *target*...
-
-`unmanage` is an alias for `forget` for symmetry with `manage`.

@@ -1,8 +1,0 @@
-symlink $HOME/.symlink -> .file
-
-# test that chezmoi apply removes broken symlinks
-exec chezmoi apply
-! lexists $HOME/.symlink
-
--- home/user/.local/share/chezmoi/.chezmoiremove --
-.symlink

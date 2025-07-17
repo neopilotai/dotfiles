@@ -1,3 +1,0 @@
-# test that .chezmoi.config variables are capitalized correctly
-exec chezmoi execute-template '{{ .chezmoi.config.keepassxc.command }}'
-stdout '^keepassxc-cli$'

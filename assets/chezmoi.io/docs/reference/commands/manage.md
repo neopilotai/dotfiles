@@ -1,3 +1,0 @@
-# `manage` *target*...
-
-`manage` is an alias for `add` for symmetry with `unmanage`.
