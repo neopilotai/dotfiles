@@ -430,6 +430,8 @@ require('tmux-awesome-manager').setup({
   open_new_as = 'pane' -- open new command as.  options: pane, window, separated_session.
 })
 
+require('neopilot').setup()
+
 tmux = require('tmux-awesome-manager')
 
 vim.keymap.set('v', 'l', tmux.send_text_to, {}) -- Send text to a open terminal?

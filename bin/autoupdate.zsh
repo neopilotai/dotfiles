@@ -100,7 +100,7 @@ if [ $last_system -gt $system_seconds ] || [ $force_update -eq 1 ]; then
   revolver_stop
 
   revolver_update "Updating nvim..."
-  nvim +PlugUpgrade +PlugClean! +PlugUpdate +PlugInstall +CocUpdateSync +TSUpdateSync +qall
+  nvim -c "source $HOME/dotfiles/dot_vimrc" +PlugUpgrade +PlugClean! +PlugUpdate +PlugInstall +CocUpdateSync +TSUpdateSync +qall
   update_error nvim $?
   revolver_stop
 
@@ -110,9 +110,12 @@ if [ $last_system -gt $system_seconds ] || [ $force_update -eq 1 ]; then
   revolver_stop
 
   revolver_update "Updating pip packages..."
-  pip3 install --quiet --upgrade pip setuptools wheel && \
+  # The --break-system-packages flag is used to bypass PEP 668 (externally-managed-environment) error.
+  # This is generally not recommended for long-term Python environment management.
+  # Consider using pipx or virtual environments for better practice.
+  pip3 install --quiet --upgrade pip setuptools wheel --break-system-packages && \
     pip3 freeze --local | grep -v '^-e' | cut -d = -f 1 | \
-    xargs -n1 pip3 install --quiet --upgrade
+    xargs -n1 pip3 install --quiet --upgrade --break-system-packages
   update_error pip $?
   revolver_stop
 
@@ -121,7 +124,7 @@ if [ $last_system -gt $system_seconds ] || [ $force_update -eq 1 ]; then
   revolver_stop
 
   revolver_update "Syncing Vale styles in notes..."
-  pushd $HOME/styles && vale sync && popd
+  pushd $HOME/dotfiles/notes/styles && vale sync && popd
   revolver_stop
 
   $HOME/bin/sync_neopilotai.sh

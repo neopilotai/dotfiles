@@ -149,6 +149,7 @@ Plug 'kevinhwang91/nvim-hlslens', has('nvim') ? {} : { 'on': [] }
 Plug 'petertriho/nvim-scrollbar', has('nvim') ? {} : { 'on': [] }
 Plug 'otavioschwanck/tmux-awesome-manager.nvim', has('nvim') ? {} : { 'on': [] }
 Plug 'chrisgrieser/nvim-early-retirement', has('nvim') ? {} : { 'on': [] }
+Plug 'neopilot-ai/neopilot.nvim', has('nvim') ? {} : { 'on': [] }
 
 if exists('$OPENAI_API_KEY')
   Plug 'harjotgill/CodeGPT.nvim', has('nvim') ? {} : { 'on': [] }
