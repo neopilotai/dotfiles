@@ -1,3 +1,4 @@
+# insult prints a random insult message formatted in yellow; if INSULTS_OFFENSIVE_ENABLED is set, additional offensive insults are included.
 function insult() {
 	local INSULTS=(
 		"You type like I drive.",

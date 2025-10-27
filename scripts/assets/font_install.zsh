@@ -1,7 +1,8 @@
 #!/usr/bin/env zsh
 
 # Optimized font installation for dotfiles
-# This script handles nerd font installation for Linux systems
+# install_nerd_fonts downloads and installs missing Nerd Font variants and Noto Color Emoji into ~/.local/share/fonts.
+# It extracts ZIP archives when `unzip` is available, removes Windows-compatible variants, refreshes the font cache with `fc-cache` when present, and skips fonts that are already installed.
 
 install_nerd_fonts() {
     local nerd_font='https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3'

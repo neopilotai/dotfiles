@@ -37,6 +37,10 @@ function @yazpt_segment_nl() {
   fi
 }
 
+# @yazpt_segment_excuse constructs an excuse message when the last command exited with a relevant non-zero code and stores it in yazpt_state[excuse].
+#
+# When INSULTS_ENABLED is true and the recorded exit code is not 0, 127, or 130, the function builds a message
+# that begins with a bomb emoji, includes the output of excuse(), and ends with a newline; otherwise it stores an empty string.
 function @yazpt_segment_excuse() {
   local code="$yazpt_state[exit_code]"
   local excuse_msg=''
@@ -56,6 +60,7 @@ APP_CHEERS_PATTERNS=(
   "git_ship"
 )
 
+# @yazpt_segment_cheers appends a celebratory message to yazpt_state[cheers] when cheers are enabled, the last command exited successfully, and LAST_COMMAND matches any pattern in APP_CHEERS_PATTERNS; on macOS with iTerm2 integration it also triggers an iTerm2 fireworks action.
 function @yazpt_segment_cheers() {
   local do_cheers=false
   local cheers_msg=''
@@ -83,7 +88,9 @@ function @yazpt_segment_cheers() {
   yazpt_state[cheers]=$cheers_msg
 }
 
-# Configure yazpt
+# configure_yazpt configures default yazpt prompt settings.
+# It initializes YAZPT_LAYOUT from PROMPT_LAYOUT, sets YAZPT_CWD_COLOR to 6 (cyan),
+# and sets YAZPT_EXECTIME_MIN_SECONDS to 1.
 function configure_yazpt {
   YAZPT_LAYOUT=$PROMPT_LAYOUT
   YAZPT_CWD_COLOR=6 # cyan
