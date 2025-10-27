@@ -23,7 +23,8 @@ WHITE_BRIGHT="\e[97m"
 
 # Enhanced utility functions with better error handling and status reporting
 
-# Status reporting functions (enhanced versions of existing color codes)
+# print_status prints a colorized, emoji-prefixed status line to stdout.
+# print_status accepts two arguments: the first is the status type (one of: error, warning, success, info, step, title) which selects color and emoji, and the second is the message string to display.
 print_status() {
     local status=$1
     local message=$2
@@ -53,7 +54,8 @@ print_status() {
     esac
 }
 
-# Safe command execution with error handling
+# safe_execute runs a shell command and prints an error message on failure, returning the command's exit code.
+# Takes the command to run as the first argument and an optional error message as the second argument; on failure the provided message is printed (with the exit code) and that exit code is returned.
 safe_execute() {
     local command="$1"
     local error_msg="${2:-Command failed}"
@@ -67,21 +69,23 @@ safe_execute() {
     fi
 }
 
-# Check if command exists
+# command_exists checks whether the given command name is available in PATH.
 command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-# Platform detection
+# is_macos checks whether the current platform is macOS.
 is_macos() {
     [[ "$OSTYPE" == "darwin"* ]]
 }
 
+# is_linux checks whether the current platform is Linux.
+# Exits with status 0 if OSTYPE starts with "linux-gnu", 1 otherwise.
 is_linux() {
     [[ "$OSTYPE" == "linux-gnu"* ]]
 }
 
-# Array utilities
+# array_contains checks whether a specified element is present in an array and returns 0 if found, 1 otherwise.
 array_contains() {
     local array="$1[@]"
     local seeking=$2
@@ -95,12 +99,13 @@ array_contains() {
     return $in
 }
 
-# Enhanced version of silent_background with better error handling
+# silent_background runs a command detached from the terminal in the background while keeping its stderr visible to the caller.
+# It temporarily adjusts job control to start the command, redirects the command's stderr to the caller's stderr, disowns the job, and then restores job control.
 silent_background() {
     set +m && { "$@" 2>&3 & disown; pid=$!; } 3>&2 2>/dev/null && set -m
 }
 
-# Error handling utility
+# handle_error prints an error message for the most recently executed command if it failed and returns that command's exit code.
 handle_error() {
     local exit_code=$?
     local command="$1"
@@ -111,6 +116,7 @@ handle_error() {
     return 0
 }
 
+# zsh_stats displays Zsh history statistics, showing the most-used commands with counts and usage percentages.
 function zsh_stats() {
   echo -e "${CYAN_BRIGHT}  == Zsh history statistics == ${RESET}"
   HISTFILE=~/.zsh_history fc -R

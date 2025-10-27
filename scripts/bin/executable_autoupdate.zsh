@@ -3,7 +3,7 @@
 # check whether this script is being eval'ed
 [[ $0 =~ "autoupdate.zsh" ]] && sourced=0 || sourced=1
 
-# Track errors from various update commands in an array and show the result before exiting
+# update_error appends a descriptive error entry to the global update_errors array when a command's exit code is non-zero.
 function update_error() {
 	error_cmd=$1
 	error_code=$2
@@ -15,6 +15,7 @@ function update_error() {
 
 tp='success'
 
+# show_errors prints any accumulated update errors, sends a terminal notification when the script is sourced, and otherwise exits with status 0 if overall status is "success" or 1 if "error".
 function show_errors() {
 	if [ ${#update_errors[@]} -ne 0 ]; then
 		tp='error'
@@ -35,6 +36,7 @@ function show_errors() {
 	fi
 }
 
+# check_interval computes the number of seconds since the timestamp stored in ~/FILENAME and echoes the interval; if the file does not exist it treats the last update as 0.
 function check_interval() {
 	now=$(date +%s)
 	if [ -f ~/${1} ]; then
@@ -46,6 +48,7 @@ function check_interval() {
 	echo ${interval}
 }
 
+# revolver_stop stops the revolver progress display and restores the terminal cursor visibility.
 function revolver_stop() {
   revolver stop
   tput cnorm

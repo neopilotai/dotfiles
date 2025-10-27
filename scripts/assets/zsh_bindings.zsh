@@ -1,7 +1,7 @@
 # Zsh key bindings and completion configuration
 # This file contains fzf-tab and completion settings
 
-# Zsh Vi Mode configuration
+# zvm_config configures zsh-vi-mode by setting the terminal type and cursor styles for insertion, normal, and append modes.
 zvm_config() {
   # Always identify as xterm-256color to zsh-vi-mode plugin
   ZVM_TERM=xterm-256color
@@ -10,7 +10,7 @@ zvm_config() {
   ZVM_OPPEND_MODE_CURSOR=$ZVM_CURSOR_UNDERLINE
 }
 
-# Zsh Vi Mode after init
+# zvm_after_init configures zsh completion, integrates zoxide and fzf/fzf-tab previews, applies extensive zstyle rules for git, processes, files, env vars, and tools, and finally loads fast-syntax-highlighting and autosuggestions.
 zvm_after_init() {
   zicompinit
   [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
