@@ -1,7 +1,194 @@
-# This file is now modularized. Do not edit directly.
-# Your configurations are now located in dot_zshrc.d/
+# NeoPilot Zsh Configuration
+# Modular configuration for better maintainability
 
-# Source modular files
-for config_file in "$HOME/dotfiles/dot_zshrc.d"/*.zsh; do
-  source "$config_file"
-done
+# Load environment variables and basic setup
+source ~/scripts/assets/zsh_env.zsh
+
+# Terminal detection and configuration
+function set_terminal {
+	if [[ -z "${TERMINAL:-}" ]]; then
+		OS="$(uname)"
+		if [[ "$OS" = "Darwin" ]]; then
+			export TERMINAL=$TERM_PROGRAM
+			# iTerm2 profile installation (handled automatically)
+			if [[ ! -e "${HOME}/.iterm2_profile_check_v2" ]]; then
+				rm -f "${HOME}/.iterm2_profile_check"
+				if gum confirm "Do you want to use NeoPilot's bundled iTerm2 colors/font profile?"; then
+					# Install iTerm2 profile
+					cp ~/scripts/assets/iterm2_gruvbox.json ~/Library/Application\ Support/iTerm2/DynamicProfiles/
+					pip3 install iterm2 && python3 ~/scripts/assets/iterm2_default.py && touch "${HOME}/.iterm2_profile_check_v2" || (
+						echo; echo; echo "Failed to install iTerm2 profile. You might need to enable Python API within iTerm2 preferences (under Magic tab). Press Enter to continue." && read
+					)
+					# Ask about wallpaper
+					if gum confirm "Do you want to use matching wallpaper?"; then
+						osascript -e "tell application \"Finder\" to set desktop picture to POSIX file \"$HOME/scripts/assets/apple_gruvbox.heic\""
+					fi
+				else
+					echo "no" > "${HOME}/.iterm2_profile_check_v2"
+				fi
+			fi
+			return
+		fi
+
+		# Other OS detection
+		if [[ "${OS#CYGWIN}" != "${OS}" ]]; then
+			export TERMINAL="mintty"
+		elif [[ "$TERM" = "xterm-kitty" ]]; then
+			export TERMINAL="kitty"
+		else
+			# Generic terminal detection
+			pid="$$"
+			export TERMINAL="$(ps -h -o comm -p $pid)"
+			while [[ "${TERMINAL:(-2)}" == "sh" ]]; do
+				pid="$(ps -h -o ppid -p $pid)"
+				export TERMINAL="$(ps -h -o comm -p $pid)"
+			done
+		fi
+	fi
+}
+
+# Tmux integration
+if [[ -z "$START_TMUX" ]]; then
+	export START_TMUX=true
+fi
+
+# Check for tmux and start if enabled
+if [[ -x "$(command -v tmux)" ]]; then
+	if $START_TMUX; then
+		export START_TMUX=false
+		set_terminal
+		DETACHED_SESSIONS=$(tmux ls 2&>/dev/null | grep -v attached)
+		if [[ -n "$DETACHED_SESSIONS" ]]; then
+			DETACHED_SESSIONS=$(tmux ls | grep -v attached)
+			DETACHED_SESSIONS="New Session\n$DETACHED_SESSIONS"
+			SESSION_NAME=$(echo "$DETACHED_SESSIONS" | \
+				fzf --header="== Attach to a detached session ==" \
+				--ansi --color="dark" \
+				--preview="$HOME/scripts/assets/.session_preview {}")
+			if [[ $SESSION_NAME == "New Session" ]]; then
+				tmux -u new-session
+			else
+				SESSION_NAME=$(echo "$SESSION_NAME" | cut -d':' -f1)
+				tmux -u attach -t $SESSION_NAME
+			fi
+		else
+			tmux -u new-session
+		fi
+		exit
+	fi
+fi
+
+# Homebrew installation check
+if ! command -v brew &> /dev/null; then
+	echo "Installing homebrew..."
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	source ~/.zprofile
+	~/scripts/bin/autoupdate.zsh --force
+fi
+
+# Welcome message
+figlet -w 80 NeoPilot Zsh && echo "" 2&>/dev/null
+
+# Load utilities
+source ~/scripts/assets/utils.zsh
+
+# Command expansion function
+function expand-command-aliases() {
+	cmd="$1"
+	functions[expandaliasestmp]="${cmd}"
+	print -rn -- "${functions[expandaliasestmp]#$'\t'}"
+	unset 'functions[expandaliasestmp]'
+}
+
+# Pre-execution hook
+_brew_completion_update=false
+
+func preexec() {
+	export LAST_COMMAND="$(expand-command-aliases "$1")"
+
+	# Tmux environment sync
+	if [ -n "$TMUX" ] && tmux ls >/dev/null 2>/dev/null; then
+		eval "$(tmux show-environment -s | grep -v "^unset")"
+		local uuid="$(tmux show-environment -g TMUX_UUID 2>/dev/null)"
+		if [[ -z "$LAST_TMUX_UUID" ]]; then
+			export LAST_TMUX_UUID="$uuid"
+		else
+			if [ "$LAST_TMUX_UUID" != "$uuid" ]; then
+				export LAST_TMUX_UUID="$uuid"
+				echo -e "${BLUE_BRIGHT} == Autoupdate detected | Zsh reloading == ${RESET}"
+				tmux respawn-pane -k -t "$TMUX_PANE" "cd \"$PWD\" && $LAST_COMMAND && zsh --login"
+				echo
+				echo -e "${BLUE_BRIGHT} == Zsh reloaded == ${RESET}"
+				echo
+			fi
+		fi
+	fi
+
+	# Brew completion update trigger
+	if [[ "$LAST_COMMAND" =~ "brew install" ]] || [[ "$LAST_COMMAND" =~ "brew upgrade" ]] || [[ "$LAST_COMMAND" =~ "brew uninstall" ]] || [[ "$LAST_COMMAND" =~ "brew reinstall" ]]; then
+		_brew_completion_update=true
+	fi
+}
+
+# Pre-command hook
+function precmd() {
+	if $_brew_completion_update; then
+		zinit update brew-completions
+		_brew_completion_update=false
+	fi
+}
+
+# GitHub status monitoring
+periodic() { silent_background timeout 2 $HOME/scripts/bin/gh_checks_status.sh > /tmp/gh_$$ }
+PERIOD=10
+
+# Load modular components
+source ~/scripts/assets/zsh_prompt.zsh
+source ~/scripts/assets/zsh_plugins.zsh
+source ~/scripts/assets/zsh_bindings.zsh
+source ~/scripts/assets/zsh_integrations.zsh
+
+# Terminal integration messages
+if [[ $TERM == *"tmux"* || $TERM == *"screen"* || -n $TMUX ]]; then
+  echo -e "${YELLOW_BRIGHT} Welcome to ${CYAN_BRIGHT}tmux${RESET}"
+  echo -e "${YELLOW_BRIGHT} Press ${CYAN_BRIGHT}<C-a C-Space>${YELLOW_BRIGHT} for fuzzy menu - look for additional commands under ${CYAN_BRIGHT}menu${YELLOW_BRIGHT} selection${RESET}"
+  echo -e "${YELLOW_BRIGHT} Press ${CYAN_BRIGHT}F12${YELLOW_BRIGHT} for tmux menu${RESET}"
+else
+  sessions=$(tmux list-sessions 2&> /dev/null | cut -d ":" -f1)
+  # check whether $sessions is not empty
+  if [ -n "$sessions" ]; then
+    echo -e "\n${BOLD}${CYAN_BRIGHT}  == Active tmux Sessions ==${RESET}";
+    for i in $sessions ; do
+        echo -e "${BOLD}${YELLOW_BRIGHT}     [*] $i"
+    done;
+  fi
+  echo -e "${CYAN_BRIGHT}  == Run tms to create and select tmux sessions == ${RESET}"
+  echo -e "${RESET}"
+fi
+
+echo -e "${YELLOW_BRIGHT} Press ${CYAN_BRIGHT}<TAB>${YELLOW_BRIGHT} to invoke auto-complete menu for commands, arguments and options${RESET}"
+echo
+
+# override terminal profile colors using escape codes
+if $SET_TERMINAL_COLORS; then
+  $HOME/scripts/assets/set_colors.zsh
+fi
+
+# LanguageTool configuration
+export LANGTOOL_USERNAME=""
+export LANGTOOL_API_KEY=""
+export LANGTOOL_HTTP_URI=""
+
+# FluxNinja Aperture Tilt Environment Variables
+export TILT_APERTURE_SSH_KEY_PUB=$HOME/.ssh/id_ed25519.pub
+export TILT_GRAFANA_REPO=$HOME/Work/fluxninja/grafana
+
+# Linux-specific configuration
+if [[ $OSTYPE == 'linux'* ]]; then
+	export QT_QPA_FONTDIR=~/.local/share/fonts
+fi
+
+# Source local configuration
+if [ -f ~/.zshrc_local ]; then
+	source ~/.zshrc_local
+fi

@@ -29,7 +29,7 @@ done
 
 shift "$((OPTIND - 1))"
 
-cmd="export ZINIT_TURBO=false;source ~/assets/utils.zsh;\
+cmd="export ZINIT_TURBO=false;source ~/scripts/assets/utils.zsh;\
 command -v zsh-notify-before-command >/dev/null 2>&1 && zsh-notify-before-command '$*';\
 $*;\
 command -v zsh-notify-after-command >/dev/null 2>&1 && zsh-notify-after-command"

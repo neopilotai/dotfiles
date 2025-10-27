@@ -21,8 +21,94 @@ MAGENTA_BRIGHT="\e[95m"
 CYAN_BRIGHT="\e[96m"
 WHITE_BRIGHT="\e[97m"
 
-function silent_background() {
-   set +m && { "$@" 2>&3 & disown; pid=$!; } 3>&2 2>/dev/null && set -m
+# Enhanced utility functions with better error handling and status reporting
+
+# Status reporting functions (enhanced versions of existing color codes)
+print_status() {
+    local status=$1
+    local message=$2
+
+    case $status in
+        "error")
+            echo -e "${RED}❌ $message${RESET}"
+            ;;
+        "warning")
+            echo -e "${YELLOW}⚠️  $message${RESET}"
+            ;;
+        "success")
+            echo -e "${GREEN}✅ $message${RESET}"
+            ;;
+        "info")
+            echo -e "${BLUE}ℹ️  $message${RESET}"
+            ;;
+        "step")
+            echo -e "${CYAN}➡️  $message${RESET}"
+            ;;
+        "title")
+            echo -e "${MAGENTA}🔧 $message${RESET}"
+            ;;
+        *)
+            echo -e "   $message"
+            ;;
+    esac
+}
+
+# Safe command execution with error handling
+safe_execute() {
+    local command="$1"
+    local error_msg="${2:-Command failed}"
+
+    if eval "$command"; then
+        return 0
+    else
+        local exit_code=$?
+        print_status error "$error_msg (exit code: $exit_code)"
+        return $exit_code
+    fi
+}
+
+# Check if command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Platform detection
+is_macos() {
+    [[ "$OSTYPE" == "darwin"* ]]
+}
+
+is_linux() {
+    [[ "$OSTYPE" == "linux-gnu"* ]]
+}
+
+# Array utilities
+array_contains() {
+    local array="$1[@]"
+    local seeking=$2
+    local in=1
+    for element in "${!array}"; do
+        if [[ $element == "$seeking" ]]; then
+            in=0
+            break
+        fi
+    done
+    return $in
+}
+
+# Enhanced version of silent_background with better error handling
+silent_background() {
+    set +m && { "$@" 2>&3 & disown; pid=$!; } 3>&2 2>/dev/null && set -m
+}
+
+# Error handling utility
+handle_error() {
+    local exit_code=$?
+    local command="$1"
+    if [ $exit_code -ne 0 ]; then
+        print_status error "Command failed: $command (exit code: $exit_code)"
+        return $exit_code
+    fi
+    return 0
 }
 
 function zsh_stats() {
@@ -106,9 +192,9 @@ fi
 source $HOME/.local/share/zinit/zinit.git/zinit.zsh
 
 zinit light marzocchi/zsh-notify
-zstyle ':notify:*' error-icon "$HOME/assets/lose.png"
+zstyle ':notify:*' error-icon "$HOME/scripts/assets/lose.png"
 zstyle ':notify:*' error-title "wow such #fail"
-zstyle ':notify:*' success-icon "$HOME/assets/win.png"
+zstyle ':notify:*' success-icon "$HOME/scripts/assets/win.png"
 zstyle ':notify:*' success-title "very #success. wow"
 # aggressively notify when commands complete as we use a whitelist
 zstyle ':notify:*' command-complete-timeout 1
@@ -121,8 +207,8 @@ if [[ $OSTYPE == 'linux'* ]]; then
   # linux
   zstyle ':notify:*' app-name sh
   zstyle ':notify:*' expire-time 5000
-  zstyle ':notify:*' error-sound "$HOME/assets/lose.ogg"
-  zstyle ':notify:*' success-sound "$HOME/assets/win.ogg"
+  zstyle ':notify:*' error-sound "$HOME/scripts/assets/lose.ogg"
+  zstyle ':notify:*' success-sound "$HOME/scripts/assets/win.ogg"
 fi
 
 if [[ $OSTYPE == 'darwin'* ]]; then

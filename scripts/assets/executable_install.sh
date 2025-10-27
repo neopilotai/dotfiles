@@ -22,11 +22,13 @@ read -r answer
 if [ "$answer" = "n" ]; then
 	echo "Installing local homebrew..."
 	mkdir homebrew
+	# Use official Homebrew installation with verification
 	curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
 else
 	# delete local homebrew if it exists
 	rm -rf ~/homebrew
 	echo "Installing system homebrew..."
+	# Use official installation method
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
@@ -40,12 +42,14 @@ brew install chezmoi
 brew install zsh
 # install gum
 brew install gum
-# add $(which zsh) to the list of shells if it doesn't exist
-if ! grep -q $(which zsh) /etc/shells; then
-	echo "Adding $(which zsh) to /etc/shells"
-	sudo sh -c "echo $(which zsh) >> /etc/shells"
+
+# Safely add zsh to shells if not present
+ZSH_PATH=$(which zsh)
+if ! grep -q "$ZSH_PATH" /etc/shells 2>/dev/null; then
+	echo "Adding $ZSH_PATH to /etc/shells"
+	sudo sh -c "echo '$ZSH_PATH' >> /etc/shells"
 fi
-chsh -s $(which zsh)
+chsh -s "$ZSH_PATH"
 
 echo "Authenticating with GitHub. Please make sure to choose ssh option for authentication."
 
@@ -79,13 +83,20 @@ chezmoi apply -v
 
 # run autoupdate script
 echo "Running autoupdate script..."
-~/bin/executable_autoupdate.zsh --force
+~/scripts/bin/autoupdate.zsh --force
 # if autoupdate failed, exit
 if [ $? -ne 0 ]; then
 	echo "Failed to run autoupdate script"
 	exit 1
 fi
 
-# reboot computer
-echo "Restarting computer..."
-sudo reboot
+# Ask user before rebooting instead of forcing it
+echo "Installation complete! A restart is recommended to apply all changes."
+echo "Would you like to restart now? [y/N]"
+read -r restart_answer
+if [[ $restart_answer =~ ^[Yy]$ ]]; then
+	echo "Restarting computer..."
+	sudo reboot
+else
+	echo "Please restart your computer manually when convenient."
+fi

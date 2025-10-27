@@ -10,5 +10,5 @@ cd $HOME
 if [ "$1" = "personal" ]; then
 	nvim -p .gitconfig_local .vimrc_local .vimrc_plugins .autoupdate_local.zsh .tmux.conf_local .brew_local
 else
-	nvim -p .vimrc .config/nvim/init.vim .config/nvim/coc-settings.json .zshrc .gitconfig .gitignore .zprofile .tmux.conf .tmux.conf.settings ~/bin/executable_autoupdate.zsh ~/bin/sync_brews.sh
+	nvim -p .vimrc .config/nvim/init.vim .config/nvim/coc-settings.json .zshrc .gitconfig .gitignore .zprofile .tmux.conf .tmux.conf.settings ~/scripts/bin/autoupdate.zsh ~/scripts/bin/sync_brews.sh
 fi
