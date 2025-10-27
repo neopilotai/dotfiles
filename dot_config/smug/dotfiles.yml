@@ -1,8 +1,0 @@
-session: dotfiles
-root: ~
-
-windows:
-  - name: nvim-dotfiles
-    layout: main-vertical
-    commands:
-      - ~/assets/dotfiles-edit.sh
