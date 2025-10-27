@@ -1,212 +1,334 @@
 # NeoPilot Dotfiles
 
-Welcome to NeoPilot optimized development environment that is well integrated
-with our stack.
+![NeoPilot Neovim](./scripts/assets/vim.png)
 
-## Setup
+## Table of Contents
 
-We use [chezmoi](https://www.chezmoi.io) to manage NeoPilot dotfiles in your
-home directory.
+- [Introduction](#introduction)
+- [Quick Start](#quick-start)
+- [Features](#features)
+  - [Terminal (Zsh)](#terminal-zsh)
+  - [Tmux](#tmux)
+  - [Neovim](#neovim)
+  - [Git](#git)
+- [Configuration](#configuration)
+  - [Local Overrides](#local-overrides)
+  - [Colors and Themes](#colors-and-themes)
+- [Development](#development)
+- [Security](#security)
+- [Troubleshooting](#troubleshooting)
 
-### Automatic Setup
+## Introduction
 
+Welcome to NeoPilot optimized development environment that is well integrated with our stack.
+
+This dotfiles repository provides a comprehensive development setup including:
+
+- **Zsh** with modern plugins and fuzzy completion
+- **Tmux** with session management and productivity features
+- **Neovim** with AI-powered completion and modern tooling
+- **Git** with enhanced workflows and theming
+
+## Quick Start
+
+### Prerequisites
+
+- [chezmoi](https://www.chezmoi.io) - Dotfile manager
+- [Homebrew](https://brew.sh) - Package manager (macOS/Linux)
+
+### Installation
+
+#### Automatic Setup (Recommended)
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/neopilotai/dotfiles/master/scripts/assets/executable_install.sh)"
 ```
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/neopilotai/dotfiles/master/assets/executable_install.sh)"
-```
 
-### Manual Setup
+#### Manual Setup
 
-```
+```bash
 cd $HOME
 chezmoi init git@github.com:neopilotai/dotfiles.git
-# show diff of changes that will be made
+# Show diff of changes that will be made
 chezmoi diff
-# If you are happy with the changes, apply away!
+# Apply changes
 chezmoi apply -v
 ```
 
-Please close and reopen the terminal to trigger first time install/updates.
+After installation, close and reopen your terminal to trigger first-time setup.
 
-Recommend using `GitHub CLI` for authenticating with GitHub. Run
-`gh auth login`. Alternatively, add
-[SSH key to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh).
+### Post-Installation
 
-## Git setup
+1. **GitHub Authentication**: Run `gh auth login` or add SSH key to your GitHub account
+2. **Nerd Fonts**: Enable a nerd font (e.g., `Hack Nerd Font`) in your terminal
+3. **iTerm2 Integration**: On macOS, the setup will offer to install the bundled iTerm2 profile
 
-### Username and local settings
+## Features
 
-Provide username and email address by creating `.gitconfig_local` e.g.
+### Terminal (Zsh)
+
+![Zsh](./scripts/assets/zsh.png)
+
+#### Core Features
+- **Fuzzy Menus**: Press `TAB` for command completion, `^R` for history search
+- **Vi Mode**: Press `ESC` to enter Vi NORMAL mode
+- **Smart Prompt**: Shows Git status, exit codes, and contextual information
+- **Auto-complete**: Enhanced completion with previews and descriptions
+
+#### Quality of Life
+- **Insults/Cheers**: Fun feedback for command success/failure (configurable)
+- **Weather Display**: Shows current weather on startup
+- **GitHub Status**: Displays GitHub service status
+- **Auto-updates**: Automatic dotfile updates every 7 days
+
+#### Key Bindings
+- `<TAB>` - Command completion menu
+- `^R` - History fuzzy search
+- `ESC` - Enter Vi mode
+- `vv` (in Vi mode) - Open file in Neovim with Copilot
+
+### Tmux
+
+![Tmux Menu](./scripts/assets/tmux-menu.png)
+![Tmux Fuzzy Menu](./scripts/assets/tmux-fzf.png)
+
+#### Core Features
+- **Session Management**: Automatic session restoration and fuzzy session switching
+- **Fuzzy Menu**: Press `<C-a><C-Space>` for quick tmux management
+- **Tmux Menu**: Press `F12` for session/window/pane management
+- **Nested Sessions**: Press `F1` to suspend/unsuspend local tmux
+
+#### Key Bindings
+- `<C-a>` or `<C-b>` - Prefix key
+- `<C-a><C-Space>` - Fuzzy menu
+- `F12` - Tmux management menu
+- `F1` - Toggle nested sessions
+- `<C-a><C-/>` - Fuzzy search in terminal buffer
+- `<C-a><C-P>` - PathPicker integration
+
+### Neovim
+
+This environment provides a modern Neovim setup optimized for development.
+
+![Fuzzy Menu](./scripts/assets/fuzzymenu.png)
+![IDE](./scripts/assets/vim_ide.png)
+
+#### AI Integration
+- **GitHub Copilot**: Type `:Copilot setup` to configure
+- **CodeGPT**: Highlight code and press `<space><space>` for AI options
+- **LanguageTool**: Premium integration for grammar checking
+
+#### Key Features
+- **Fuzzy Menu**: Press `<space><space>` or `Shift+LeftMouse` for contextual actions
+- **Color Schemes**: Multiple themes with Gruvbox as default
+- **Landing Page**: Helpful links and discoverability aids
+
+#### Configuration
+You can provide additional settings in:
+- `$HOME/.vimrc_local` - Additional Vim configuration
+- `$HOME/.vimrc_plugins` - Additional plugins
+- `$HOME/.config/nvim/init.vim` - Neovim-specific settings
+
+### Git
+
+#### Enhanced Configuration
+- **Delta Integration**: Modern diff viewer with syntax highlighting
+- **Git Extras**: Additional Git commands and utilities
+- **Smart Defaults**: Optimized merge and push behavior
+
+#### Theme Integration
+See `.gitconfig_themes` for available themes. Override in your local `.gitconfig_local`.
+
+## Configuration
+
+### Local Overrides
+
+All tools support local override files that won't be overwritten by updates:
+
+| Tool | Override File | Purpose |
+|------|---------------|---------|
+| Zsh | `.zshrc_local` | Additional shell configuration |
+| Vim | `.vimrc_local` | Additional Vim settings |
+| Tmux | `.tmux.conf_local` | Additional tmux settings |
+| Git | `.gitconfig_local` | Personal Git configuration |
+| Homebrew | `.brew_local` | Private package list |
+| Fsh | `.config/fsh_local` | Fast syntax highlighting theme |
+
+### Colors and Themes
+
+The setup uses **Gruvbox Dark** as the default theme across all tools.
+
+#### Terminal Colors
+- **macOS**: iTerm2 profile installation offered during setup
+- **Linux**: Colors set via escape codes (disable with `SET_TERMINAL_COLORS=false`)
+- **Alternative**: Use terminal's built-in color profiles
+
+#### Available Themes
+- **bat**: `BAT_THEME` environment variable
+- **FZF**: Base16 color schemes from [base16-fzf](https://github.com/fnune/base16-fzf)
+- **LS_COLORS**: [vivid](https://github.com/sharkdp/vivid) integration
+- **Git**: Multiple themes in `.gitconfig_themes`
+
+## Development
+
+### Repository Structure
 
 ```
-[user]
-  name = Harjot Gill
-  email = harjot@neopilot.ai
-[github]
-   user = <github user name>
-   token = <personal access token>
+├── dot_*                    # Chezmoi dotfiles (prefixed with dot_)
+├── scripts/                 # Scripts and assets
+│   ├── assets/             # Configuration assets, scripts, images
+│   └── bin/                # Executable scripts
+├── .github/workflows/       # GitHub Actions
+├── .chezmoidot.toml        # Chezmoi configuration
+├── .chezmoiignore          # Chezmoi ignore patterns
+├── Makefile                # Development tasks
+└── README.md              # This file
 ```
 
-You can generate
-[personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
-for GitHub to use HTTP API. Also, it's useful to add this token to your
-`$HOME/.netrc` file. Run -
-`echo 'machine api.github.com login <user> password <token>' >> $HOME/.netrc`
+### Development Commands
 
-### GitHub org cloning script
+```bash
+# Show available commands
+make help
 
-To clone NeoPilot, run: `gh_clone_all.sh neopilotai $HOME/work`. This step
-is performed automatically on installation.
+# Lint configuration files
+make lint
 
-### Git pull all repos script
+# Validate setup and run security checks
+make validate
 
-To update all repos in a directory, run: `pull_all.sh $HOME/work/neopilotai`.
-This step is performed automatically on auto-updates.
+# Run security validation only
+make security
 
-## Preparing your terminal
+# Update dotfiles
+make update
 
-- **Nerd fonts**: Please enable a nerd font such as `Hack Nerd Font` in your
-  terminal profile to see icons properly when using `nvim` in terminal mode.
-- **Terminal colors**: See the section about [colors](#colors).
+# Show current status
+make status
+```
 
-## Homebrew
+### Adding New Dotfiles
 
-Homebrew is the default package manager for this environment. You can provide
-private packages by adding them to: `$HOME/.brew_local`
+```bash
+# Add a new file to be managed
+make add FILE=path/to/your/file
 
-## Autoupdates
+# Edit existing dotfile with chezmoi
+make edit
+```
 
-This environment is set to autoupdate every 7 days by default. You can trigger
-autoupdates manually by calling `autoupdate.zsh --force` You can provide custom
-autoupdate commands by adding them to: `$HOME/.autoupdate_local.zsh`
+## Troubleshooting
 
-## zshrc
+### Common Issues
 
-You can provide additional zshrc settings by adding them to:
-`$HOME/.zshrc_local`
+#### Terminal Colors Not Working
+```bash
+# Disable automatic color setting
+echo 'export SET_TERMINAL_COLORS=false' >> ~/.zshrc_local
+```
 
-![zsh](./assets/zsh.png)
+#### Missing Dependencies
+```bash
+# Install Homebrew (required)
+make install
+# or manually:
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
 
-### Features
+#### Chezmoi Issues
+```bash
+# Check chezmoi status
+chezmoi doctor
 
-- Fuzzy menus: Fuzzy menus are available for command completion (press `TAB`)
-  menus and command history (press `^r`).
-- Vi mode: Press `ESC` to enter Vi `NORMAL` mode. Cool tip - while in normal
-  mode, press `vv` to switch to visual mode (it will open `nvim` editor) and in
-  that mode you can use GitHub Copilot to build sophisticated commands using AI!
-- Prompt flags: Type `yazpt_explain_git` to understand the meaning of various
-  flags in the prompt.
-- Forgit: You can use `forgit` as an interactive frontend for various git
-  commands. E.g. try `git forgit log`.
-- iTerm2 integration: On macOS, please install iTerm2 shell
-  [integration](https://iterm2.com/documentation-shell-integration.html) to use
-  nice features such as navigating marks in prompt.
+# Force update
+chezmoi update --force
 
-## tmux
+# Show what would change
+chezmoi diff
+```
 
-`tmux` sessions are automatically started as part of `.zshrc` execution. You
-will be shown an option to join an existing detached session if they exist,
-otherwise a new session will be created and attached to.
+#### Permission Issues
+```bash
+# Fix chezmoi permissions
+chezmoi state reset
+chezmoi apply
+```
 
-### Features
+### Getting Help
 
-- Prefix: `C-a` or `C-b`
-- Fuzzy menu: Press `C-a C-Space` to access fuzzy menu for quick tmux management
-  and shortcuts to various commands.
-- tmux menu: Press `F12` to access tmux session/window/pane management menu.
-- Nested tmux sessions (e.g. remote ssh): Press `F1` to suspend/unsuspend local
-  tmux.
-- [Smug](https://github.com/ivaaaan/smug): Define and orchestrate tmux sessions
-  with smug. e.g. use smug to start/stop local dev Kubernetes cluster and so on.
-- Fuzzy search tmux terminal buffer: Press `C-a C-/`
-- Vi bindings are enabled in tmux copy mode
-- Facebook PathPicker: Press `C-a C-P` to select any line from scrollback buffer
-  (e.g. git status) and use those in another command.
-- Urlview: Press `C-a C-U` to select any url in scrollback buffer and open in
-  browser.
+1. **Check Status**: Run `make status` to see current state
+2. **Validate Setup**: Run `make validate` to check for issues
+3. **View Diff**: Run `chezmoi diff` to see pending changes
+4. **Documentation**: Check tool-specific documentation in comments
 
-## Neovim
+### Manual Recovery
 
-This environment is highly tuned towards providing a modern neovim/vim setup for
-development using modern languages such as Golang, Typescript etc.
+If something breaks, you can:
 
-### vimrc
+1. **Backup current setup**: `chezmoi backup`
+2. **Reset to known state**: `chezmoi apply --force`
+3. **Check logs**: Look for error messages in terminal output
 
-You can provide additional `vimrc` settings by adding them to:
-`$HOME/.vimrc_local`. You can also use **FuzzyMenu** (`<space><space>`) to tweak
-and persist local settings. In addition, you can provide additional vim plugins
-by adding them to `$HOME/.vimrc_plugins`.
+## Security
 
-Several `colorschemes` are bundled and `gruvbox` is chosen by default. You can
-override `colorscheme` by providing `let colorscheme = <colorscheme>` in your
-`.vimrc_local` file.
+### Security Features
 
-See `.vimrc` file for available `colorschemes`. Also see
-`~/.config/nvim/init.vim` for Neovim specific settings.
+This dotfiles repository includes several security measures:
 
-### Discoverability of commands and plugins
+- **No Hardcoded Secrets**: All sensitive data uses environment variables or secure vaults
+- **Safe Installation**: Verified downloads and proper input validation
+- **Secure Defaults**: Conservative permissions and safe shell practices
+- **Regular Validation**: Automated security checks and linting
 
-- Landing page for new tabs contains several useful links that help with
-  discoverability.
-- Press `<space><space>` (double space) or `Shift + LeftMouse` click to open a
-  contextual FuzzyMenu for the word under cursor or selection.
+### Security Validation
 
-### AI-based autocompletion
+Run security checks before making changes:
 
-- GitHub Copilot - Type `:Copilot setup` in Neovim to set up.
-- CodeGPT - Just highlight the code and press `<space><space>` to see CodeGPT
-  options in the FuzzyMenu. You must provide `OPENAI_API_KEY` environment
-  variable in your `.zshrc_local` to use this feature.
+```bash
+# Run full validation
+make validate
 
-### LanguageTool
+# Run security validation only
+make security
 
-If you have LanguageTool Premium, you can provide `LANGTOOL_HTTP_URI`,
-`LANGTOOL_USERNAME` and `LANGTOOL_API_KEY` environment variables to use the
-language server in Neovim.
+# Lint all configuration files
+make lint
+```
 
-## Colors
+### Best Practices
 
-Unlike `nvim` which allows setting themes easily via `.vimrc_local`, color
-themes for terminal interface are spread across multiple settings.
+#### For Users
+- Store API keys and tokens in environment variables, not config files
+- Use `*_local` files for personal settings (they're automatically ignored)
+- Regularly update your system and packages
+- Use SSH keys instead of passwords when possible
 
-- **Terminal theme** -
-  - macOS: For iTerm2, the option will be provided to install bundled profile
-    that contains font/color settings. If you do not wish to install the
-    profile, then the colors will be set via terminal escape codes unless
-    `SET_TERMINAL_COLORS` is set to `false` in your `.zshrc_local`.
-  - Linux: Colors will be set automatically using terminal escape codes unless
-    `SET_TERMINAL_COLORS` is set to `false` in your `.zshrc_local`.
-    Alternatively, you can install default color profile using
-    `$HOME/assets/install_gruvbox.sh`. Make sure to set `SET_TERMINAL_COLORS`
-    to `false` in your `.zshrc_local` if you would like to use terminal's color
-    profiles.
-- tmux theme - See `.tmux.conf.settings` for example configuration and override
-  it in your personal `.tmux.conf_local` file. The tmux theme configures the
-  tmux status line and not the terminal itself.
-- bat theme (cat replacement) - Environment variable `BAT_THEME` sets the theme.
-  See `bat --list-themes` to get the list. You can override this theme in your
-  `.zshrc_local` file. Bat is used extensively for fzf previews, git pager
-  (delta), less command filter and so on.
-- FZF colors - Get and source color schemes from
-  [base16-fzf](https://github.com/fnune/base16-fzf) in your
-  `$HOME/.zshrc_local`.
-- LS_COLORS - We use [vivid](https://github.com/sharkdp/vivid) to set the
-  themes. Run `vivid themes` to get the list. You can override this theme in
-  your `.zshrc_local` file.
-- Git pager - See `.gitconfig_themes` to see the available themes. You can
-  override them in your local `.gitconfig_local`.
-- Fast Syntax Highlighting (zsh) - You can run `fast-theme -l` to get the list.
-  To set the theme, first, override `FAST_WORK_DIR` environment variable in your
-  `.zshrc` and point it to `$HOME/.config/fsh_local`. Next, run
-  `fast-theme <theme>` to switch the theme.
+#### For Contributors
+- Never commit secrets or personal information
+- Use `make security` before submitting changes
+- Follow shell scripting best practices
+- Validate all user input in scripts
 
-Note: Currently all these settings are configured to match `gruvbox-dark` color
-palette. But it's pretty easy to override them to match `onedark` or
-[Nord](https://www.nordtheme.com)
+### Security Considerations
 
-Bonus:
+#### Installation Security
+- Homebrew installation uses official sources
+- No automatic privilege escalation
+- User confirmation for system changes
 
-- Slack Gruvbox - Paste this in your DM to Slackbot and click the
-  `Switch sidebar theme` button.
-  ` gruvbox dark #282828,#3c3836,#ebdbb2,#1d2021,#3e313c,#ebdbb2,#689d6a,#fb4934`
+#### Update Security
+- Package updates use safe practices
+- npm audit runs before applying fixes
+- pip updates respect requirements files when available
 
-## Managing `*_local` override files
+#### Configuration Security
+- Local override files are never committed
+- Sensitive paths are properly ignored
+- No world-writable files by default
+
+## Contributing
+
+1. **Test changes**: Use `make validate` before committing
+2. **Security check**: Run `make security` to ensure no security issues
+3. **Update documentation**: Keep README.md in sync with changes
+4. **Follow conventions**: Use existing patterns for new configurations
